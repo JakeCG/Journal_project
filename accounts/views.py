@@ -17,16 +17,27 @@ def signup(request):
                 auth.login(request, user)
                 return redirect('home')
         else:
-            return render(request, 'accounts/signup.html', {'error': 'Passwords must match'})
+            return render(request, 'accounts/signup.html', {'error': 'Passwords must match!'})
     else:
         # User wants to enter info
         return render(request, 'accounts/signup.html')
 
 
 def login(request):
-    return render(request, 'accounts/login.html')
+    if request.method == 'POST':
+        user = auth.authenticate(username=request.POST['username'], password=request.POST['password'])
+        if user is not None:
+            auth.login(request, user)
+            return redirect('home')
+        else:
+            return render(request, 'accounts/login.html', {'error': 'Username or password is incorrect.'})
+    else:
+        return render(request, 'accounts/login.html')
 
 
 def logout(request):
+    if request.method == 'POST':
+        auth.logout(request)
+        return redirect('home')
     # TODO need to route to homepage
     return render(request, 'accounts/signup.html')
