@@ -19,4 +19,9 @@ class Journal(models.Model):
         return self.body[:100] + "..."
 
     def pub_date_pretty(self):
-        return self.pub_date. strftime('%e %b %Y')
+        return self.pub_date.strftime('%e %b %Y')
+
+
+class Vote(models.Model):
+    voter = models.ForeignKey(User, on_delete=models.CASCADE)
+    entry = models.ForeignKey(Journal, on_delete=models.CASCADE)
