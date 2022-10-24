@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Journal
 from django.utils import timezone
+
 
 # Create your views here.
 
@@ -29,7 +30,12 @@ def create(request):
             entry.pub_date = timezone.now()
             entry.author = request.user
             entry.save()
-            return redirect('home') # TODO redirect to home
+            return redirect('/entries/' + str(entry.id))  # TODO redirect to home
 
     else:
         return render(request, 'entries/create.html', {'error': 'All fields are required!'})
+
+
+def detail(request, entry_id):
+    entry = get_object_or_404(Journal, pk=entry_id)
+    return render(request, 'entries/detail.html', {'entry': entry})
