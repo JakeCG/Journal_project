@@ -7,7 +7,6 @@ class Journal(models.Model):
     title = models.CharField(max_length=255)
     pub_date = models.DateTimeField()
     body = models.TextField()
-    images = models.ImageField(upload_to='images/')
     icon = models.ImageField(upload_to='images/')
     url = models.TextField()
     votes_total = models.IntegerField(default=1)

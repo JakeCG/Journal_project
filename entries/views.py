@@ -26,7 +26,6 @@ def create(request):
                 # Auto formats the url if it isn't correct.
                 entry.url = 'http://' + request.POST['url']
             entry.icon = request.FILES['icon']
-            entry.image = request.FILES['image']
             entry.pub_date = timezone.now()
             entry.author = request.user
             entry.save()
