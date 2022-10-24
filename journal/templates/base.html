@@ -92,7 +92,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
             <img src="{% static 'solirius_logo.png' %}" class="d-inline-block align-top" height="30" width="auto"/>
-                   Working title
+                <a class="nav-link" href="http://127.0.0.1:8000/">Home</a>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,6 +101,7 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
+                    <a class="nav-link" aria-current="page" href="{% url 'create' %}">Create an entry</a>
                     <a class="nav-link" href="javascript:{document.getElementById('logout').submit()}">Logout</a>
                     <form id="logout" method="POST" action="{% url 'logout' %}">
                         {% csrf_token %}
