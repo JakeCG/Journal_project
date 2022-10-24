@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+<br/>
+<br/>
+<br/>
 <div class="row">
   <div class="col-2">
     <img src="{{ entry.icon.url }}" class="img-fluid" />
   </div>
   <div class="col-8">
     <br/>
-    <a href="{{ entry.url }}"><h1 align="center">{{ entry.title }}</h1></a>
+    <a style="color:black;text-decoration:none;" href="{{ entry.url }}"><h1 align="center">{{ entry.title }}</h1></a>
   </div>
 </div>
 <br/>
@@ -28,12 +30,17 @@
     <h4><span class="oi oi-clock"></span>Date published: {{ entry.pub_date_pretty }}</h4>
   </div>
 </div>
-
+<br/>
 <div class="row">
   <div class="col-14">
     <p>{{ entry.body }}</p>
   </div>
 </div>
+
+<form id="upvote" method="POST" action="{% url 'upvote' entry.id %}">
+  {% csrf_token %}
+  <input type="hidden">
+</form>
 
 
 {% endblock %}

@@ -7,10 +7,11 @@ from django.utils import timezone
 # Create your views here.
 
 def home(request):
-    return render(request, 'entries/home.html')
+    entries = Journal.objects
+    return render(request, 'entries/home.html', {'entries': entries})
 
 
-@login_required  # forces the user to be logged in.
+@login_required(login_url="/accounts/signup")  # forces the user to be logged in.
 def create(request):
     if request.method == 'POST':
         if request.POST['title'] and request.POST['body'] and request.POST['url'] and request.FILES['icon'] and \
@@ -38,3 +39,11 @@ def create(request):
 def detail(request, entry_id):
     entry = get_object_or_404(Journal, pk=entry_id)
     return render(request, 'entries/detail.html', {'entry': entry})
+
+@login_required(login_url="/accounts/signup")
+def upvote(request, entry_id):
+    if request.method == 'POST':
+        entry = get_object_or_404(Journal, pk=entry_id)
+        entry.votes_total += 1
+        entry.save()
+        return redirect('/entries/' + str(entry.id))
