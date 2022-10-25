@@ -14,16 +14,16 @@
 
         {% csrf_token %}
         <h1 style="font-size:18px">Title:</h1>
-        <input class="form-control" type="text" name="title" />
+        <input class="form-control" type="text" name="title" required/>
         <br/>
         <h1 style="font-size:18px">Body:</h1>
-        <input class="form-control"  type="textbox" name="body"/>
+        <input class="form-control"  type="textbox" name="body" required/>
         <br/>
         <h1 style="font-size:18px">URL:</h1>
-        <input class="form-control" type="text" name="url" />
+        <input class="form-control" type="text" name="url" required/>
         <br/>
         <h1 style="font-size:18px">Image:</h1>
-        <input class="form-control" type="file" name="icon" />
+        <input class="form-control" type="file" name="icon" required accept="image/png, image/jpeg image/gif"/>
         <br/>
         <br/>
         <br/>
