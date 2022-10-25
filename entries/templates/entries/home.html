@@ -2,6 +2,8 @@
 
 {% block content %}
 <br/>
+
+<h1 align="center">Multi-User Journal</h1>
 {% for entry in entries.all %}
 <div class="row pt-3" align="center">
     <div class="col-2" onclick="window.location='{% url 'detail' entry.id %}';" style="cursor: pointer">
