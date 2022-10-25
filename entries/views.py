@@ -14,8 +14,7 @@ def home(request):
 @login_required(login_url="/accounts/signup")  # forces the user to be logged in.
 def create(request):
     if request.method == 'POST':
-        if request.POST['title'] and request.POST['body'] and request.POST['url'] and request.FILES['icon'] and \
-                request.FILES['image']:
+        if request.POST['title'] and request.POST['body'] and request.POST['url'] and request.FILES['icon']:
             # big check to make sure all entries are actually filled in.
             entry = Journal()
             entry.title = request.POST['title']
