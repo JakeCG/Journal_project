@@ -72,7 +72,7 @@ class TestProjectPage(StaticLiveServerTestCase):
         signUp = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Sign up!']").text
         assert "Sign up!" in signUp
 
-    def test_signup_error_no_mismatch_pass(self):
+    def test_signup_error_mismatch_pass(self):
         # The user requests the signup page and enters mismatching passwords.
         self.browser.get(self.live_server_url)
         self.browser.find_element(By.XPATH, "//a[normalize-space()='Sign up']").click()
