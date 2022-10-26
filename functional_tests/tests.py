@@ -1,20 +1,20 @@
-from selenium import webdriver
-from entries.models import Journal
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.urls import reverse
 import time
+
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 
 
 class TestProjectPage(StaticLiveServerTestCase):
 
     def setUp(self):
         service_object = Service("/Users/jakegowler/Downloads/chromedriver 2")
+        # Talk about test instability in headless mode.
         self.browser = webdriver.Chrome(service=service_object)
 
     def tearDown(self):
-        self.browser.close()
+        self.browser.quit()
 
     def test_Opening_landing_page(self):
         # The user opens the landing page.
@@ -197,4 +197,123 @@ class TestProjectPage(StaticLiveServerTestCase):
         self.browser.find_element(By.XPATH, "//a[normalize-space()='Create an entry']").click()
         createTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Share an entry.']").text
         assert "Share an entry." in createTitle
+
+    def test_register_success_create_entry(self):
+        # The user signs up successfully, then navigates to the create page, creates an entry and is navigated to the
+        # created page.
+        self.browser.get(self.live_server_url)
+        self.browser.find_element(By.XPATH, "//a[normalize-space()='Sign up']").click()
+        signUp = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Sign up!']").text
+        assert "Sign up!" in signUp
+        self.browser.find_element(By.XPATH, "//input[@value='Sign up']").click()
+        self.browser.find_element(By.XPATH, "//input[@name='username']").send_keys("tester")
+        self.browser.find_element(By.XPATH, "//input[@name='password1']").send_keys("password")
+        self.browser.find_element(By.XPATH, "//input[@name='password2']").send_keys("password")
+        self.browser.find_element(By.XPATH, "//input[@value='Sign up']").click()
+        landingTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Multi-User Journal']").text
+        assert "Multi-User Journal" in landingTitle
+        self.browser.find_element(By.XPATH, "//a[normalize-space()='Create an entry']").click()
+        createTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Share an entry.']").text
+        assert "Share an entry." in createTitle
+        testInput = 'Lorem Ipsum'
+        self.browser.find_element(By.XPATH, "//input[@name='title']").send_keys(testInput)
+        self.browser.find_element(By.XPATH, "//input[@name='body']").send_keys('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.')
+        self.browser.find_element(By.XPATH, "//input[@name='url']").send_keys('https://www.lipsum.com/')
+        self.browser.find_element(By.XPATH, "//input[@name='icon']").send_keys('/Users/jakegowler/Documents/Lorem-Ipsum.png')
+        self.browser.find_element(By.XPATH, "//input[@value='Add entry']").click()
+        assert testInput in self.browser.find_element(By.CSS_SELECTOR, "h1[align='center']").text
+
+    def test_register_success_upvote_entry(self):
+        # The user signs up successfully, then navigates to the create page, creates an entry, is navigated to the
+        # created page, and then presses the upvote button.
+        self.browser.get(self.live_server_url)
+        self.browser.find_element(By.XPATH, "//a[normalize-space()='Sign up']").click()
+        signUp = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Sign up!']").text
+        assert "Sign up!" in signUp
+        self.browser.find_element(By.XPATH, "//input[@value='Sign up']").click()
+        self.browser.find_element(By.XPATH, "//input[@name='username']").send_keys("tester")
+        self.browser.find_element(By.XPATH, "//input[@name='password1']").send_keys("password")
+        self.browser.find_element(By.XPATH, "//input[@name='password2']").send_keys("password")
+        self.browser.find_element(By.XPATH, "//input[@value='Sign up']").click()
+        landingTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Multi-User Journal']").text
+        assert "Multi-User Journal" in landingTitle
+        self.browser.find_element(By.XPATH, "//a[normalize-space()='Create an entry']").click()
+        createTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Share an entry.']").text
+        assert "Share an entry." in createTitle
+        testInput = 'Lorem Ipsum'
+        self.browser.find_element(By.XPATH, "//input[@name='title']").send_keys(testInput)
+        self.browser.find_element(By.XPATH, "//input[@name='body']").send_keys('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.')
+        self.browser.find_element(By.XPATH, "//input[@name='url']").send_keys('https://www.lipsum.com/')
+        self.browser.find_element(By.XPATH, "//input[@name='icon']").send_keys('/Users/jakegowler/Documents/Lorem-Ipsum.png')
+        self.browser.find_element(By.XPATH, "//input[@value='Add entry']").click()
+        assert testInput in self.browser.find_element(By.CSS_SELECTOR, "h1[align='center']").text
+        self.browser.find_element(By.XPATH, "//button[normalize-space()='Upvote 1']").click()
+        upvoteButton = self.browser.find_element(By.CSS_SELECTOR, ".btn.btn-primary.btn-lg.btn-block").text
+        assert "Upvote 2" in upvoteButton
+
+    def test_register_success_create_entry_view_homepage(self):
+        # The user signs up successfully, then navigates to the create page, creates an entry and is navigated to the
+        # created page, and tries to view their creation on the homepage.
+        self.browser.get(self.live_server_url)
+        self.browser.find_element(By.XPATH, "//a[normalize-space()='Sign up']").click()
+        signUp = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Sign up!']").text
+        assert "Sign up!" in signUp
+        self.browser.find_element(By.XPATH, "//input[@value='Sign up']").click()
+        self.browser.find_element(By.XPATH, "//input[@name='username']").send_keys("tester")
+        self.browser.find_element(By.XPATH, "//input[@name='password1']").send_keys("password")
+        self.browser.find_element(By.XPATH, "//input[@name='password2']").send_keys("password")
+        self.browser.find_element(By.XPATH, "//input[@value='Sign up']").click()
+        landingTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Multi-User Journal']").text
+        assert "Multi-User Journal" in landingTitle
+        self.browser.find_element(By.XPATH, "//a[normalize-space()='Create an entry']").click()
+        createTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Share an entry.']").text
+        assert "Share an entry." in createTitle
+        testInput = 'Lorem Ipsum'
+        self.browser.find_element(By.XPATH, "//input[@name='title']").send_keys(testInput)
+        testBody = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        self.browser.find_element(By.XPATH, "//input[@name='body']").send_keys(testBody)
+        self.browser.find_element(By.XPATH, "//input[@name='url']").send_keys('https://www.lipsum.com/')
+        self.browser.find_element(By.XPATH, "//input[@name='icon']").send_keys('/Users/jakegowler/Documents/Lorem-Ipsum.png')
+        self.browser.find_element(By.XPATH, "//input[@value='Add entry']").click()
+        assert testInput in self.browser.find_element(By.CSS_SELECTOR, "h1[align='center']").text
+        self.browser.find_element(By.XPATH, "//a[normalize-space()='Home']").click()
+        landingTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Multi-User Journal']").text
+        assert "Multi-User Journal" in landingTitle
+        assert testInput in self.browser.find_element(By.XPATH, "//body[1]/div[1]/div[1]/div[2]/h1[1]").text
+        assert testBody[:100] in self.browser.find_element(By.XPATH, "//body/div[@class='container']/div[1]/div[2]/p[1]").text
+        assert "Upvote 1" in self.browser.find_element(By.XPATH, "//button[normalize-space()='Upvote 1']").text
+
+    def test_register_success_create_entry_view_click_upvote(self):
+        # The user signs up successfully, then navigates to the create page, creates an entry and is navigated to the
+        # created page, and tries to view their creation on the homepage, then clicks upvote on the homepage.
+        self.browser.get(self.live_server_url)
+        self.browser.find_element(By.XPATH, "//a[normalize-space()='Sign up']").click()
+        signUp = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Sign up!']").text
+        assert "Sign up!" in signUp
+        self.browser.find_element(By.XPATH, "//input[@value='Sign up']").click()
+        self.browser.find_element(By.XPATH, "//input[@name='username']").send_keys("tester")
+        self.browser.find_element(By.XPATH, "//input[@name='password1']").send_keys("password")
+        self.browser.find_element(By.XPATH, "//input[@name='password2']").send_keys("password")
+        self.browser.find_element(By.XPATH, "//input[@value='Sign up']").click()
+        landingTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Multi-User Journal']").text
+        assert "Multi-User Journal" in landingTitle
+        self.browser.find_element(By.XPATH, "//a[normalize-space()='Create an entry']").click()
+        createTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Share an entry.']").text
+        assert "Share an entry." in createTitle
+        testInput = 'Lorem Ipsum'
+        self.browser.find_element(By.XPATH, "//input[@name='title']").send_keys(testInput)
+        testBody = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        self.browser.find_element(By.XPATH, "//input[@name='body']").send_keys(testBody)
+        self.browser.find_element(By.XPATH, "//input[@name='url']").send_keys('https://www.lipsum.com/')
+        self.browser.find_element(By.XPATH, "//input[@name='icon']").send_keys('/Users/jakegowler/Documents/Lorem-Ipsum.png')
+        self.browser.find_element(By.XPATH, "//input[@value='Add entry']").click()
+        assert testInput in self.browser.find_element(By.CSS_SELECTOR, "h1[align='center']").text
+        self.browser.find_element(By.XPATH, "//a[normalize-space()='Home']").click()
+        landingTitle = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Multi-User Journal']").text
+        assert "Multi-User Journal" in landingTitle
+        assert "Upvote 1" in self.browser.find_element(By.XPATH, "//button[normalize-space()='Upvote 1']").text
+        self.browser.find_element(By.XPATH, "//button[normalize-space()='Upvote 1']").click()
+        signUp = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Sign up!']").text
+        assert "Sign up!" in signUp
+
 
