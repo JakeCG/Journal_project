@@ -12,6 +12,7 @@ class TestProjectPage(StaticLiveServerTestCase):
         service_object = Service("/Users/jakegowler/Downloads/chromedriver 2")
         # Talk about test instability in headless mode.
         self.browser = webdriver.Chrome(service=service_object)
+        self.browser.implicitly_wait(2)
 
     def tearDown(self):
         self.browser.quit()
