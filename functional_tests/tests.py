@@ -4,6 +4,9 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 class TestProjectPage(StaticLiveServerTestCase):
@@ -11,7 +14,7 @@ class TestProjectPage(StaticLiveServerTestCase):
     def setUp(self):
         service_object = Service("/Users/jakegowler/Downloads/chromedriver 2")
         # Talk about test instability in headless mode.
-        self.browser = webdriver.Chrome(service=service_object)
+        self.browser = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         self.browser.implicitly_wait(2)
 
     def tearDown(self):
@@ -314,7 +317,8 @@ class TestProjectPage(StaticLiveServerTestCase):
         assert "Multi-User Journal" in landingTitle
         assert "Upvote 1" in self.browser.find_element(By.XPATH, "//button[normalize-space()='Upvote 1']").text
         self.browser.find_element(By.XPATH, "//button[normalize-space()='Upvote 1']").click()
-        signUp = self.browser.find_element(By.XPATH, "//h1[normalize-space()='Sign up!']").text
-        assert "Sign up!" in signUp
+        testInput = 'Lorem Ipsum'
+        assert testInput in self.browser.find_element(By.CSS_SELECTOR, "h1[align='center']").text
+
 
 
