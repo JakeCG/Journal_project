@@ -1,1 +1,1 @@
-web: gunicorn Journal_porject.wsgi
+web: gunicorn Journal_project.wsgi
